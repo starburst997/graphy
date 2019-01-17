@@ -1,5 +1,9 @@
 # Graphy - Ultimate FPS Counter - Stats Monitor & Debugger (Unity)
 
+**Links:** [Discord](https://discord.gg/2KgNEHK?) | [Mail](martintayx@gmail.com) | [Twitter](https://twitter.com/tayx94?) | [Asset store](https://assetstore.unity.com/packages/tools/gui/graphy-ultimate-stats-monitor-debugger-105778) | [Forum post](https://forum.unity.com/threads/graphy-ultimate-stats-monitor-debugger-released.517387/)
+
+**WINNER** of the **BEST DEVELOPMENT ASSET** in the **Unity Awards 2018**.
+
 ![Graphy Image](https://image.ibb.co/dbcDu8/2018_07_15_15_10_05.gif)
 
 Graphy is the ultimate, easy to use, feature packed FPS Counter, stats monitor and debugger for your Unity project.
@@ -61,6 +65,7 @@ You can also join the [Discord](https://discord.gg/2KgNEHK?) for active discussi
     - Log Graphy messages to this module.
     - Integrate Graphy commands into it.
     - Allow custom commands from user.
+  - Add GfxDriver stats to the RAM module.
   - Prewarm framerates: X seconds where min/max fps are not registered to avoid loading spikes registering.
   - Scale Canvas (GetComponent<Canvas>().scaleFactor *= multiplier;) -> If it changes, set again.
   - Make UI layout adapt on the fly to compact it when not showing graphs.

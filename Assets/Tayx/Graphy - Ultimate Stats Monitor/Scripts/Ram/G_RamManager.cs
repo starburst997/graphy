@@ -10,33 +10,27 @@
  * -------------------------------------*/
 
 using UnityEngine;
-
-using System.Collections;
 using System.Collections.Generic;
-
 using Tayx.Graphy.UI;
 using Tayx.Graphy.Utils;
 using UnityEngine.UI;
 
 namespace Tayx.Graphy.Ram
 {
-    public class RamManager : MonoBehaviour, IMovable, IModifiableState
+    public class G_RamManager : MonoBehaviour, IMovable, IModifiableState
     {
         /* ----- TODO: ----------------------------
-         * Check if we can seal this class.
          * Add summaries to the variables.
          * Add summaries to the functions.
-         * Check if we can remove "using System.Collections;".
-         * Check if we should add "private" to the Unity Callbacks.
          * Check if we should add a "RequireComponent" for "RectTransform".
          * Check if we should add a "RequireComponent" for "RamGraph".
-         * Check why this manager doesnt use FpsMonitor, as all the other managers have a monitor script.
+         * Check why this manager doesnt use RamMonitor, as all the other managers have a monitor script.
          * Check if we should add a "RequireComponent" for "RamText".
          * --------------------------------------*/
 
         #region Variables -> Serialized Private
 
-        [SerializeField] private    GameObject              m_ramGraphGameObject;
+        [SerializeField] private    GameObject              m_ramGraphGameObject = null;
 
         [SerializeField] private    List<Image>             m_backgroundImages          = new List<Image>();
 
@@ -44,28 +38,28 @@ namespace Tayx.Graphy.Ram
 
         #region Variables -> Private
 
-        private                 GraphyManager               m_graphyManager;
+        private                 GraphyManager               m_graphyManager = null;
         
-        private                 RamGraph                    m_ramGraph;
-        private                 RamText                     m_ramText;
+        private                 G_RamGraph                  m_ramGraph = null;
+        private                 G_RamText                   m_ramText = null;
 
-        private                 RectTransform               m_rectTransform;
+        private                 RectTransform               m_rectTransform = null;
 
         private                 List<GameObject>            m_childrenGameObjects       = new List<GameObject>();
 
-        private                 GraphyManager.ModuleState   m_previousModuleState;
-        private                 GraphyManager.ModuleState   m_currentModuleState;
+        private                 GraphyManager.ModuleState   m_previousModuleState = GraphyManager.ModuleState.FULL;
+        private                 GraphyManager.ModuleState   m_currentModuleState = GraphyManager.ModuleState.FULL;
         
         #endregion
 
         #region Methods -> Unity Callbacks
 
-        void Awake()
+        private void Awake()
         {
             Init();
         }
-        
-        void Start()
+
+        private void Start()
         {
             UpdateParameters();
         }
@@ -111,6 +105,9 @@ namespace Tayx.Graphy.Ram
                     m_rectTransform.anchorMin           = Vector2.right;
                     m_rectTransform.anchoredPosition    = new Vector2(-xSideOffset, ySideOffset);
 
+                    break;
+
+                case GraphyManager.ModulePosition.FREE:
                     break;
             }
         }
@@ -213,8 +210,8 @@ namespace Tayx.Graphy.Ram
         {
             m_graphyManager = transform.root.GetComponentInChildren<GraphyManager>();
 
-            m_ramGraph      = GetComponent<RamGraph>();
-            m_ramText       = GetComponent<RamText>();
+            m_ramGraph      = GetComponent<G_RamGraph>();
+            m_ramText       = GetComponent<G_RamText>();
 
             m_rectTransform = GetComponent<RectTransform>();
             

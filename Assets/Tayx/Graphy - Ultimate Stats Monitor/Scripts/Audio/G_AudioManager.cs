@@ -10,65 +10,58 @@
  * -------------------------------------*/
 
 using UnityEngine;
-using System.Collections;
+using UnityEngine.UI;
 using System.Collections.Generic;
-using System.Linq;
 using Tayx.Graphy.UI;
 using Tayx.Graphy.Utils;
-using UnityEngine.UI;
 
-namespace Tayx.Graphy.Fps
+namespace Tayx.Graphy.Audio
 {
-    public class FpsManager : MonoBehaviour, IMovable, IModifiableState
+    public class G_AudioManager : MonoBehaviour, IMovable, IModifiableState
     {
         /* ----- TODO: ----------------------------
-         * Check if we can seal this class.
          * Add summaries to the variables.
          * Add summaries to the functions.
-         * Check if we can remove "using System.Collections;".
-         * Check if we should add "private" to the Unity Callbacks.
-         * Check if we can remove "using System.Linq;".
          * Check if we should add a "RequireComponent" for "RectTransform".
-         * Check if we should add a "RequireComponent" for "FpsGraph".
-         * Check if we should add a "RequireComponent" for "FpsMonitor".
-         * Check if we should add a "RequireComponent" for "FpsText".
+         * Check if we should add a "RequireComponent" for "AudioGraph".
+         * Check if we should add a "RequireComponent" for "AudioMonitor".
+         * Check if we should add a "RequireComponent" for "AudioText".
          * --------------------------------------*/
 
         #region Variables -> Serialized Private
 
-        [SerializeField] private    GameObject                  m_fpsGraphGameObject;
+        [SerializeField] private    GameObject                  m_audioGraphGameObject = null;
+        [SerializeField] private    Text                        m_audioDbText = null;
 
-        [SerializeField] private    List<GameObject>            m_nonBasicTextGameObjects   = new List<GameObject>();
-
-        [SerializeField] private    List<Image>                 m_backgroundImages          = new List<Image>();
+        [SerializeField] private    List<Image>                 m_backgroundImages      = new List<Image>();
 
         #endregion
 
         #region Variables -> Private
 
-        private                     GraphyManager               m_graphyManager;
-        
-        private                     FpsGraph                    m_fpsGraph;
-        private                     FpsMonitor                  m_fpsMonitor;
-        private                     FpsText                     m_fpsText;
+        private                     GraphyManager               m_graphyManager = null;
 
-        private                     RectTransform               m_rectTransform;
+        private                     G_AudioGraph                m_audioGraph = null;
+        private                     G_AudioMonitor              m_audioMonitor = null;
+        private                     G_AudioText                 m_audioText = null;
 
-        private                     List<GameObject>            m_childrenGameObjects       = new List<GameObject>();
+        private                     RectTransform               m_rectTransform = null;
 
-        private                     GraphyManager.ModuleState   m_previousModuleState;
-        private                     GraphyManager.ModuleState   m_currentModuleState;
+        private                     List<GameObject>            m_childrenGameObjects   = new List<GameObject>();
+
+        private                     GraphyManager.ModuleState   m_previousModuleState = GraphyManager.ModuleState.FULL;
+        private                     GraphyManager.ModuleState   m_currentModuleState = GraphyManager.ModuleState.FULL;
         
         #endregion
 
         #region Methods -> Unity Callbacks
 
-        void Awake()
+        private void Awake()
         {
             Init();
         }
-        
-        void Start()
+
+        private void Start()
         {
             UpdateParameters();
         }
@@ -81,6 +74,8 @@ namespace Tayx.Graphy.Fps
         {
             float xSideOffset = Mathf.Abs(m_rectTransform.anchoredPosition.x);
             float ySideOffset = Mathf.Abs(m_rectTransform.anchoredPosition.y);
+            
+            m_audioDbText.alignment = TextAnchor.UpperRight;
 
             switch (newModulePosition)
             {
@@ -115,6 +110,9 @@ namespace Tayx.Graphy.Fps
                     m_rectTransform.anchoredPosition    = new Vector2(-xSideOffset, ySideOffset);
 
                     break;
+
+                case GraphyManager.ModulePosition.FREE:
+                    break;
             }
         }
 
@@ -133,7 +131,7 @@ namespace Tayx.Graphy.Fps
                     gameObject.SetActive(true);
                     m_childrenGameObjects.SetAllActive(true);
                     SetGraphActive(true);
-
+                    
                     if (m_graphyManager.Background)
                     {
                         m_backgroundImages.SetOneActive(0);
@@ -144,8 +142,9 @@ namespace Tayx.Graphy.Fps
                     }
                     
                     break;
-
+                
                 case GraphyManager.ModuleState.TEXT:
+                case GraphyManager.ModuleState.BASIC:
                     gameObject.SetActive(true);
                     m_childrenGameObjects.SetAllActive(true);
                     SetGraphActive(false);
@@ -161,29 +160,13 @@ namespace Tayx.Graphy.Fps
                     
                     break;
 
-                case GraphyManager.ModuleState.BASIC:
-                    gameObject.SetActive(true);
-                    m_childrenGameObjects.SetAllActive(true);
-                    m_nonBasicTextGameObjects.SetAllActive(false);
-                    SetGraphActive(false);
-                    
-                    if (m_graphyManager.Background)
-                    {
-                        m_backgroundImages.SetOneActive(2);
-                    }
-                    else
-                    {
-                        m_backgroundImages.SetAllActive(false);
-                    }
-
-                    break;
-
                 case GraphyManager.ModuleState.BACKGROUND:
                     gameObject.SetActive(true);
-                    m_childrenGameObjects.SetAllActive(false);
                     SetGraphActive(false);
+                    m_childrenGameObjects.SetAllActive(false);
                     
                     m_backgroundImages.SetAllActive(false);
+
                     break;
 
                 case GraphyManager.ModuleState.OFF:
@@ -196,7 +179,7 @@ namespace Tayx.Graphy.Fps
         {
             SetState(m_previousModuleState);
         }
-        
+
         public void UpdateParameters()
         {
             foreach (var image in m_backgroundImages)
@@ -204,11 +187,11 @@ namespace Tayx.Graphy.Fps
                 image.color = m_graphyManager.BackgroundColor;
             }
             
-            m_fpsGraph      .UpdateParameters();
-            m_fpsMonitor    .UpdateParameters();
-            m_fpsText       .UpdateParameters();
+            m_audioGraph    .UpdateParameters();
+            m_audioMonitor  .UpdateParameters();
+            m_audioText     .UpdateParameters();
             
-            SetState(m_graphyManager.FpsModuleState);
+            SetState(m_graphyManager.AudioModuleState);
         }
 
         public void RefreshParameters()
@@ -218,27 +201,27 @@ namespace Tayx.Graphy.Fps
                 image.color = m_graphyManager.BackgroundColor;
             }
 
-            m_fpsGraph      .UpdateParameters();
-            m_fpsMonitor    .UpdateParameters();
-            m_fpsText       .UpdateParameters();
+            m_audioGraph    .UpdateParameters();
+            m_audioMonitor  .UpdateParameters();
+            m_audioText     .UpdateParameters();
 
             SetState(m_currentModuleState, true);
         }
 
-        #endregion
+            #endregion
 
         #region Methods -> Private
 
         private void Init()
         {
             m_graphyManager = transform.root.GetComponentInChildren<GraphyManager>();
-            
+
             m_rectTransform = GetComponent<RectTransform>();
 
-            m_fpsGraph      = GetComponent<FpsGraph>();
-            m_fpsMonitor    = GetComponent<FpsMonitor>();
-            m_fpsText       = GetComponent<FpsText>();
-
+            m_audioGraph    = GetComponent<G_AudioGraph>();
+            m_audioMonitor  = GetComponent<G_AudioMonitor>();
+            m_audioText     = GetComponent<G_AudioText>();
+            
             foreach (Transform child in transform)
             {
                 if (child.parent == transform)
@@ -250,8 +233,8 @@ namespace Tayx.Graphy.Fps
 
         private void SetGraphActive(bool active)
         {
-            m_fpsGraph.enabled = active;
-            m_fpsGraphGameObject.SetActive(active);
+            m_audioGraph.enabled = active;
+            m_audioGraphGameObject.SetActive(active);
         }
 
         #endregion
