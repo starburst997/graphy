@@ -16,14 +16,14 @@ using Tayx.Graphy.UI;
 
 namespace Tayx.Graphy.Console
 {
-    public class ConsoleManager : MonoBehaviour, IMovable
+    public class G_ConsoleManager : MonoBehaviour
     {
 
         #region Private Variables
 
         private GraphyManager           m_graphyManager;
 
-        private ConsoleView             m_consoleView;
+        private G_ConsoleView           m_consoleView;
 
         #endregion
 
@@ -39,25 +39,11 @@ namespace Tayx.Graphy.Console
             UpdateParameters();
         }
 
-        private void OnEnable()
-        {
-            Application.logMessageReceived += HandleLog;
-        }
-
-        private void OnDisable()
-        {
-            Application.logMessageReceived -= HandleLog;
-        }
+        
 
         #endregion
 
         #region Public Methods
-
-        public void SetPosition(GraphyManager.ModulePosition newModulePosition)
-        {
-            m_consoleView.SetPosition(newModulePosition);
-        }
-
 
         public void UpdateParameters()
         {
@@ -72,14 +58,7 @@ namespace Tayx.Graphy.Console
         {
             m_graphyManager = transform.root.GetComponentInChildren<GraphyManager>();
 
-            m_consoleView = GetComponent<ConsoleView>();
-        }
-
-        
-
-        private void HandleLog(string logString, string stackTrace, LogType type)
-        {
-            m_consoleView.UpdateLogTextValue(type.ToString() + ": " + logString);
+            m_consoleView = GetComponent<G_ConsoleView>();
         }
 
         #endregion

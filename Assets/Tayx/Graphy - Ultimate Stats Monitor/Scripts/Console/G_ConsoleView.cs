@@ -18,7 +18,7 @@ using Tayx.Graphy.UI;
 
 namespace Tayx.Graphy.Console
 {
-    public class ConsoleView : MonoBehaviour, IMovable
+    public class G_ConsoleView : MonoBehaviour
     {
         #region Private Variables
 
@@ -48,38 +48,14 @@ namespace Tayx.Graphy.Console
 
         #region Public Methods
 
-        // TODO: Pending implementation
-        public void SetPosition(GraphyManager.ModulePosition newModulePosition)
-        {
-            switch (newModulePosition)
-            {
-                case GraphyManager.ModulePosition.TOP_LEFT:
-
-                    break;
-
-                case GraphyManager.ModulePosition.TOP_RIGHT:
-
-                    break;
-
-                case GraphyManager.ModulePosition.BOTTOM_LEFT:
-
-                    break;
-
-                case GraphyManager.ModulePosition.BOTTOM_RIGHT:
-
-                    break;
-            }
-        }
-
-
         public void UpdateParameters()
         {
 
         }
 
-        public void UpdateLogTextValue(string newText)
+        public void UpdateLogTextValue(string logString, string stackTrace, LogType type)
         {
-            m_logText.text = newText;
+            
         }
 
         #endregion
