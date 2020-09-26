@@ -104,6 +104,15 @@ namespace Tayx.Graphy.Utils
 
         #region Methods -> Unity Callbacks
 
+        /// <summary>
+        /// Fix "Enter Play Mode"
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatic()
+        {
+            _instance = null;
+        }
+
         void Awake()
         {
             if (_instance != null)
