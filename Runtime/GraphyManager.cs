@@ -537,6 +537,11 @@ namespace Tayx.Graphy
             }
         }
 
+        public bool IsActive()
+        {
+            return m_active;
+        }
+
         public void ToggleActive()
         {
             if (!m_active)
