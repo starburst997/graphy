@@ -544,10 +544,12 @@ namespace Tayx.Graphy
                     string path = debugPacket.ScreenshotFileName + "_" + System.DateTime.Now + ".png";
                     path = path.Replace("/", "-").Replace(" ", "_").Replace(":", "-");
 
+#if false
 #if UNITY_2017_1_OR_NEWER
                     ScreenCapture.CaptureScreenshot(path);
 #else
                     Application.CaptureScreenshot(path);
+#endif
 #endif
                 }
 
